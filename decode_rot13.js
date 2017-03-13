@@ -1,28 +1,34 @@
 // decode rot13 letter substitution cipher, accounting for shifts past 'z' & 'Z', and non-alphabetic characters
 function rot13(str) {
 
-  var newStr = [];
-  var arr = str.split('');
+  var newStr = [],
+      // set up array to iterate
+      arr = str.split(''),
+      // be comprehensible rather than just assign static integer values (?)
+      lowerCaseA = 'a'.charCodeAt(0),
+      lowerCaseZ = 'z'.charCodeAt(0),
+      upperCaseA = 'A'.charCodeAt(0),
+      upperCaseZ = 'Z'.charCodeAt(0);
 
   for (i=0; i<str.length; i++) {
-
+    var currentChar = str.charCodeAt(i);
+    // if character is non-alphabetic, insert to same position in new array
     if ( str.slice(i, i+1).search(/[a-zA-Z]/) === -1 ) {
       newStr[i] = arr[i];
     }
     else {
-
-      if ( str.slice(i, i+1).search(/[a-z]/) >= 0 && str.charCodeAt(i) + 13 > 'z'.charCodeAt(0) ) {
-          newStr[i] = String.fromCharCode( ('a'.charCodeAt(0)+13) - ('z'.charCodeAt(0) - str.charCodeAt(i) +1) );
-          //newStr[i] = String.fromCharCode( 78 - (90 - str.charCodeAt(i) +1))
+      // lower case char, shift wraps around past lower case 'z' charCode value
+      if ( str.slice(i, i+1).search(/[a-z]/) >= 0 && currentChar + 13 > lowerCaseZ ) {
+          newStr[i] = String.fromCharCode( (lowerCaseA + 13) - (lowerCaseZ - currentChar + 1) );
         }
-
-      else if ( str.slice(i, i+1).search(/[A-Z]/) >= 0 && str.charCodeAt(i) + 13 > 'Z'.charCodeAt(0) ) {
-          newStr[i] = String.fromCharCode( ('A'.charCodeAt(0)+13) - ('Z'.charCodeAt(0) - str.charCodeAt(i) +1) );
-          //newStr[i] = String.fromCharCode( 100 - (122 - str.charCodeAt(i) +1))
+      // upper case char, shift wraps around past upper case 'Z' charCode value
+      else if ( str.slice(i, i+1).search(/[A-Z]/) >= 0 && currentChar + 13 > upperCaseZ ) {
+          newStr[i] = String.fromCharCode( (upperCaseA + 13) - (upperCaseZ - str.charCodeAt(i) +1) );
         }
 
       else {
-        newStr[i] = String.fromCharCode( str.charCodeAt(i) + 13 );
+        // shift value means no wrap-around
+        newStr[i] = String.fromCharCode( currentChar + 13 );
       }
     }
   }
